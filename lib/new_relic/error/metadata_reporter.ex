@@ -10,7 +10,7 @@ defmodule NewRelic.Error.MetadataReporter do
   before_elixir_version("1.15.0", def(report_error(_, {{_, :terminating}, _}), do: nil))
 
   def report_error(:transaction, {_cause, metadata}) do
-    NewRelic.add_attributes(temp_data_metadata: metadata)
+    NewRelic.add_attributes(temp_data_transaction_metadata: inspect(metadata))
     kind = :error
     {_exception_type, reason, stacktrace, _expected} = parse_reason(metadata.reason)
     process_name = parse_process_name(metadata[:registered_name], stacktrace)
@@ -25,6 +25,7 @@ defmodule NewRelic.Error.MetadataReporter do
   end
 
   def report_error(:process, {_cause, metadata}) do
+    NewRelic.add_attributes(temp_data_process_metadata: inspect(metadata))
     {exception_type, reason, stacktrace, expected} = parse_reason(metadata.reason)
 
     process_name = parse_process_name(metadata[:registered_name], stacktrace)
@@ -64,7 +65,7 @@ defmodule NewRelic.Error.MetadataReporter do
   end
 
   defp parse_reason({%type{message: message} = exception, stacktrace}) do
-    NewRelic.add_attributes(temp_data_parse_exception_with_type: exception)
+    NewRelic.add_attributes(temp_data_parse_exception_with_type: inspect(exception))
     expected = parse_error_expected(exception)
     type = inspect(type)
     reason = "(#{type}) #{message}"
@@ -73,7 +74,7 @@ defmodule NewRelic.Error.MetadataReporter do
   end
 
   defp parse_reason({exception, stacktrace}) do
-    NewRelic.add_attributes(temp_data_parse_exception_without_type: exception)
+    NewRelic.add_attributes(temp_data_parse_exception_without_type: inspect(exception))
     exception = Exception.normalize(:error, exception, stacktrace)
     type = inspect(exception.__struct__)
     message = Exception.message(exception)
