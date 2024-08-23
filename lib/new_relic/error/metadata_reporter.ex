@@ -72,6 +72,8 @@ defmodule NewRelic.Error.MetadataReporter do
     NewRelic.add_attributes(temp_data_expected_for_parse_exception_with_type: expected)
     reason = "(#{type}) #{message}"
 
+    NewRelic.add_attributes(temp_data_reason_for_parse_exception_with_type: type)
+
     {type, reason, stacktrace, expected}
   end
 
