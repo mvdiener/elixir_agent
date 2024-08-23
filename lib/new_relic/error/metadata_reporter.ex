@@ -68,6 +68,8 @@ defmodule NewRelic.Error.MetadataReporter do
     NewRelic.add_attributes(temp_data_parse_exception_with_type: inspect(exception))
     expected = parse_error_expected(exception)
     type = inspect(type)
+    NewRelic.add_attributes(temp_data_type_for_parse_exception_with_type: type)
+    NewRelic.add_attributes(temp_data_expected_for_parse_exception_with_type: expected)
     reason = "(#{type}) #{message}"
 
     {type, reason, stacktrace, expected}
@@ -77,6 +79,7 @@ defmodule NewRelic.Error.MetadataReporter do
     NewRelic.add_attributes(temp_data_parse_exception_without_type: inspect(exception))
     exception = Exception.normalize(:error, exception, stacktrace)
     type = inspect(exception.__struct__)
+    NewRelic.add_attributes(temp_data_type_for_parse_exception_without_type: type)
     message = Exception.message(exception)
     reason = "(#{type}) #{message}"
 
