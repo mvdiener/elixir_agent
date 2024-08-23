@@ -31,6 +31,7 @@ defmodule NewRelic.Error.Reporter do
     {kind, exception, stacktrace} = parse_error_info(report[:error_info])
     process_name = parse_process_name(report[:registered_name], stacktrace)
 
+    NewRelic.add_attributes(temp_data_transaction_report: inspect(report))
     NewRelic.add_attributes(process: process_name)
 
     NewRelic.Transaction.Reporter.error(%{
@@ -45,6 +46,8 @@ defmodule NewRelic.Error.Reporter do
 
     {exception_type, exception_reason, exception_stacktrace} =
       Util.Error.normalize(kind, exception, stacktrace, report[:initial_call])
+
+    NewRelic.add_attributes(temp_data_process_report: inspect(report))
 
     process_name = parse_process_name(report[:registered_name], stacktrace)
     expected = parse_error_expected(exception)
