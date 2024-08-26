@@ -12,12 +12,14 @@ defmodule NewRelic.Error.MetadataReporter do
   def report_error(:transaction, {_cause, metadata}) do
     NewRelic.add_attributes(temp_data_transaction_metadata: inspect(metadata))
     kind = :error
-    {_exception_type, reason, stacktrace, _expected} = parse_reason(metadata.reason)
+    {exception_type, reason, stacktrace, expected} = parse_reason(metadata.reason)
     process_name = parse_process_name(metadata[:registered_name], stacktrace)
 
     NewRelic.add_attributes(process: process_name)
 
     NewRelic.Transaction.Reporter.error(%{
+      error_type: exception_type,
+      expected: expected,
       kind: kind,
       reason: reason,
       stack: stacktrace
