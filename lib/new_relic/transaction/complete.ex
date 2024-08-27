@@ -501,6 +501,8 @@ defmodule NewRelic.Transaction.Complete do
   defp report_transaction_error_event(_tx_attrs, nil), do: :ignore
 
   defp report_transaction_error_event(tx_attrs, {:error, error}) do
+    NewRelic.add_attributes(temp_data_report_transaction_error_attrs: inspect(tx_attrs))
+    NewRelic.add_attributes(temp_data_report_transaction_error_error: inspect(error))
     attributes = Map.drop(tx_attrs, [:error, :error_kind, :error_reason, :error_stack])
     expected = parse_error_expected(error.reason)
 
